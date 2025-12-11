@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os.path
 from pathlib import Path
 import re
 import shutil
@@ -188,7 +189,11 @@ def main(args):
     mediadir = dstdir / 'media'
     mediadir.mkdir()
     for attachment in attachments:
-        shutil.copy(keepdir / attachment, mediadir)
+        if os.path.exists(keepdir / attachment):
+            shutil.copy(keepdir / attachment, mediadir)
+        elif str(attachment).endswith('jpeg') and os.path.exists(keepdir / str(attachment).replace('jpeg', 'jpg')):
+            shutil.copy(keepdir / str(attachment).replace('jpeg', 'jpg'), mediadir / attachment)
+
 
     archive = shutil.make_archive(dst, 'zip', root_dir=dstdir)
 
